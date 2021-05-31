@@ -1,5 +1,7 @@
 # CommonGateway Framework
 
+PHP version request: 7.3 or above.
+
 ## 介紹
 
 CommanGateway Framework 是一個極小化的 PHP Web 框架。它的主程式就只有一個檔案 - index.php 。我原先甚至不將它稱為 framework ，而只是一個導入器。但解釋麻煩，還是按一般認知，當它是框架吧。
