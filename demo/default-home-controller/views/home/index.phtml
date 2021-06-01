@@ -1,0 +1,27 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>
+Welcome to <?=$site_title?>!
+</h1>
+
+<p>
+建立 Home 控制項是 CommonGateway Framework 第二種設置首頁的方式。
+</p>
+
+<p>
+Home 控制項的必要內容是: 定義 Home 類別，實作 index 方法 (controllers/Home.php)，並建立此方法的視圖 (views/home/index.phtml)。
+當使用者執行 CommonGateway 但沒有指定控制項時，若有 Home 控制項就會執行這個控制項。
+讓使用者不必輸入 your_site/index.php/home 這種 URL 。
+</p>
+
+<p>
+當你用 CommonGateway Framework 設計一個網站時，建議用這個方式建立你的網站首頁。此途徑可以使用 CommonGateway Framework 提供的所有資源。例如 @resource 、 @authorize 。
+</p>
+
+</body>
+</html>
