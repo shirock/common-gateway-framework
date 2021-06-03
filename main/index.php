@@ -783,35 +783,7 @@ $gw->loadViewHelper();
 
 /*
 將 $model (控制項資料內容) 傳給 render() 作為「視圖活動範圍內可用的資料內容」。
-
-1. 若 $model 為 null (或無回傳值): 大部份控制項的處理函數不回傳內容，故這是預設行為。
-此時會將控制項的公開屬性當作資料來源(model)，將控制項的公開屬性內容展開成
-視圖活動範圍內的區域變數。
-例如控制項有公開屬性 title ，CommonGateway 會將此屬性指派為視圖的區域變數 $title 。
-
-2. 若 $model 為 true : 同回傳 null 的情形。
-
-3. 若 $model 為 false : 視同控制項自行處理回應工作， CommonGateway 不會繼續載入視圖。
-
-4. 若 $model 為介於100 ~ 599間的整數，視為控制項直接回傳 HTTP 狀態碼。
-CommonGateway 會將該狀態碼回傳給瀏覽器，而不載入任何視圖。
-
-5. 若 $model 為 array : CommonGateway 會將回傳的陣列視為資料來源，
-指派為視圖內的區域變數 $model，並將陣列內容展開成為視圖內的區域變數。
-注意，若陣列為數字索引陣列，則展開後的區域變數名稱之字首為 data_ 。
-例如 $model = array('a', 'b') ，則視圖內展開的區域變數內容將是
-$data_0 == 'a', $data_1 == 'b' ，餘類推。
-
-6. 若 $model 為 object : CommonGateway 會將回傳的個體視為資料來源，
-指派為視圖內的區域變數 $model。
-此時在視圖內將可以調用該個體的方法。這可以取代 helper 。
-
-7. 若 $model 型態為 array 或 object ，則視圖內將同時分配一個和控制項名稱相同的別名。
-
-例如控制項 MyBook 回傳的資料為 object ，包含一個資料欄位 Title 。
-則在視圖內，可以用下列途徑取得 Title 內容:
-1. $model->Title;
-2. $MyBook->Title;
+See doc/return-value-as-model.md
 */
 $gw->render($model);
 
