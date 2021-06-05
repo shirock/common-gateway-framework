@@ -355,8 +355,10 @@ class CommonGateway
             } 
             elseif ($content_type == 'application/json') {
                 $request_vars = json_decode($this->raw_request_data, true);
-                //if ($_SERVER['REQUEST_METHOD'] == 'POST')
-                    $_POST = &$request_vars; // 兼容傳統格式。
+                if ($request_vars === null) // there is no JSON data.
+                    HttpResponse::badRequest();
+
+                $_POST = &$request_vars; // 兼容傳統格式。
                 $_REQUEST = array_merge($_GET, $request_vars);
                 # only contains $_GET and $_POST, due to security concerns.
             } 
@@ -386,8 +388,11 @@ class CommonGateway
                 array_shift($http_accept);
             }
 
-            header('Content-Type: ' . $http_accept[0] .'; charset=utf-8');
+            if (empty($http_accept)) {
+                $http_accept[0] = 'text/html';
+            }
 
+            header('Content-Type: ' . $http_accept[0] .'; charset=utf-8');
             list($tmp, $http_accept_ext) = explode('/', $http_accept[0]);
             // $http_accept_ext would be the extension name of document type.
             // ex: '*', 'json', 'xml', etc.
