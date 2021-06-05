@@ -1,0 +1,7 @@
+<xml>
+  <books>
+    <?php foreach ($books as $book): ?>
+    <book isbn="<?=$book->isbn?>"><?=$book->title?></book>
+    <?php endforeach ?>
+  </books>
+</xml>
