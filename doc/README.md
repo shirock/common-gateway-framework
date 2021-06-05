@@ -10,6 +10,7 @@
 
 ## 功能索引
 
+* [CommonGateway 的 HTML 公用函數](cg-html-functions.md)
 * [CommonGateway 與 CodeIgniter 的對照](CommonGatewayAndCodeIgniter.md)
 * [資源注入 resource-inject](resource-inject.md)
 * [控制項方法回傳資料如何成為視圖的資料來源 model](return-value-as-model.md)
