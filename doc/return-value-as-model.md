@@ -18,6 +18,6 @@ CommonGateway 會先調用控制項方法，並接收方法回傳值。然後按
 * 若為 object : CommonGateway 會將回傳的個體視為資料來源，
   指派為視圖內的區域變數 $model。
   此時在視圖內將可以調用該個體的方法。這可以取代視圖輔助器(helper)。
-* 若為 array 或 object ，則視圖內將同時分配一個和控制項名稱相同的別名。
+* 若為 array 或 object ，則視圖內將同時分配一個和控制項名稱相同的別名(首字母小寫)。
   例如控制項 MyBook 回傳的資料為 object ，包含一個資料欄位 Title 。
-  則在視圖內，可用 $model-&gt;Title 或 $MyBook-&gt;Title 取得 Title 內容。
+  則在視圖內，可用 $model-&gt;Title 或 $myBook-&gt;Title 取得 Title 內容。
