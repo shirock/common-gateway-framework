@@ -541,10 +541,10 @@ class CommonGateway
             }
 
             // 認證用控制項為 Authorize 或 Login
-            if (file_exists($this->makeControlFilepath('Login')))
-                $authorize_control = 'Login';
-            else 
+            if (file_exists($this->makeControlFilepath('Authorize')))
                 $authorize_control = 'Authorize';
+            else 
+                $authorize_control = 'Login';
 
             $authorize_path = self::makeURL($authorize_control);
             // echo 'redirect to ', $authorize_path;
