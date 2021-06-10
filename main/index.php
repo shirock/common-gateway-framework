@@ -540,6 +540,10 @@ class CommonGateway
                 return;
             }
 
+            // RESTful 場合，轉向無用，僅需回應401
+            if ($this->request_document_type != 'html')
+                HttpResponse::unauthorized();
+
             // 認證用控制項為 Authorize 或 Login
             if (file_exists($this->makeControlFilepath('Authorize')))
                 $authorize_control = 'Authorize';
@@ -602,7 +606,7 @@ class CommonGateway
     {
         $this->app_name = $this->detectAppName($name);
         if ($this->app_name == false) {
-            HttpResponse::not_found();
+            HttpResponse::not_found("Controller $name is not found");
         }
 
         $control_filepath = $this->makeControlFilepath($this->app_name);

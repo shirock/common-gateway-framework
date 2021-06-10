@@ -44,7 +44,12 @@ CommonGateway 不管理授權細節，由設計者決定如何處理授權細節
 * 若控制項 doc 註記 @authorize ，則呼叫此控制項所有方法皆需經過認證授權。
 * 若控制項方法 doc 註記 @authorize ，則呼叫此控制項方法需經過認證授權。
 
-遇到 @authorize 註記時，CommonGateway 就依條件 `isset($_SESSION['Authorization'])`  判定授權狀態。若條件成立就呼叫執行控制項方法，若不成立就轉調用控制項 *Authorize* 或 *Login* 。
+遇到 @authorize 註記時，CommonGateway 就依條件 `isset($_SESSION['Authorization'])`  判定授權狀態。若條件成立就呼叫執行控制項方法，若不成立則視場合決定後續動作:
+
+* 當客戶端要求的文件型態不是 html 時(非網站應用):
+  CommonGateway 會回應 UNAUTHORIZED 。因為按 RESTful 慣例，在非獲授權狀態下調用受管制方法時，應回應 UNAUTHORIZED 、FORBIDDEN 或 METHOD_NOT_ALLOWED 等狀態碼，以表示此方法受到管制。
+* 當客戶端要求的文件型態是 html 時(網站應用):
+  CommonGateway 轉調用控制項 *Authorize* 或 *Login* (重導向客戶端拜訪認證控制項)。
 
 例如:
 
