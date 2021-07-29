@@ -1,5 +1,6 @@
 <?php
-namespace {
+namespace 
+{
 // Mock data, TEST ONLY
 if (PHP_SAPI == 'cli') {
     $_SERVER['PATH_INFO'] = "/book/info/123";
@@ -798,7 +799,8 @@ $gw->render($model);
 
 } // end global namespace
 
-namespace cg {
+namespace cg 
+{
 class Controller
 {
     public function index()
@@ -847,7 +849,8 @@ class Controller
 }
 } // end namespace cg
 
-namespace cg\html {
+namespace cg\html 
+{
     // base on index.php/$controller_path
     function request_url($controller_path = false)
     {
@@ -856,6 +859,11 @@ namespace cg\html {
             $root .= '/' . $controller_path;
         }
         return $root;
+    }
+
+    function home_url()
+    {
+        return request_url();
     }
 
     // redirect to $fullpath/index.php or $fullpath/index.php/controller_path

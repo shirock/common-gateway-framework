@@ -2,10 +2,12 @@ CommonGateway 的 HTML 公用函數
 =============================
 
 CommonGateway 在 cg\html namespace 內提供了下列用於設計 Web 網站時的公用函數。
-這些函數主要用在 phtml 視圖，目的是提供正確地資源 URL 。
+這些函數主要用在 phtml 視圖，目的是提供正確的資源 URL 。
 
 * request_url($controller_path = false)
   取得基於 index.php 的控制項 URL 字串。
+* home_url()
+  取得首頁的URL。
 * redirect($controller_path = false)
   導向到指定的控制項。若省略控制項就是回到首頁(index.php)。
   實際上就是執行 *header('Location: ' . request_url($controller_path));* 。
@@ -16,7 +18,7 @@ CommonGateway 在 cg\html namespace 內提供了下列用於設計 Web 網站時
 * script($srcs)
   顯示 JavaScript 文件的 HTML 載入代碼。可接受多個 js 檔案路徑。
 * refresh($seconds)
-  指示 HTML 網頁的定期更新週期。內容是 *<meta http-equiv="refresh" content="$seconds">*。
+  指示 HTML 網頁的定期更新週期。內容是 `<meta http-equiv="refresh" content="$seconds">`。
 
 範例:
 
@@ -29,6 +31,7 @@ CommonGateway 在 cg\html namespace 內提供了下列用於設計 Web 網站時
 
 <title>cg\html functions demo</title>
 
+<!-- 示範 cg\html\stylesheet() -->
 <?php
 cg\html\stylesheet('css/bootstrap.min.css');
 
@@ -37,15 +40,24 @@ cg\html\stylesheet([
   'css/theme/dark.css'
 ]);
 ?>
+</head>
 
 <body>
 
-<p>goto: <a href="<?=cg\html\request_url()?>">home</a>.
+<div>
+<!-- 示範 cg\html\resource_url('images/logo.png') -->
+<img src="<?=cg\html\resource_url('images/logo.png')?>">
+</div>
+
+<!-- 示範 cg\html\home_url() -->
+<p>goto: <a href="<?=cg\html\home_url()?>">home</a>.
 </p>
 
+<!-- 示範 cg\html\request_url('profile') -->
 <p>goto: <a href="<?=cg\html\request_url('profile')?>">profile</a>.
 </p>
 
+<!-- 示範 cg\html\script() -->
 <?php
 cg\html\script([
     'js/jquery-3.3.1.slim.min.js',
@@ -54,14 +66,12 @@ cg\html\script([
     ]);
 ?>
 
-<script>
-</script>
 </body>
 </html>
 
 ~~~
 
-假設 index.php 的 URL 是 http://your_host/myweb/index.php ，則上例視圖的實際顯示結果如下:
+假設 index.php 的 URL 是 http://your_host/myweb/index.php ，則上例視圖的實際產出內容如下:
 
 ~~~html
 
@@ -72,24 +82,33 @@ cg\html\script([
 
 <title>cg\html functions demo</title>
 
-<link rel="stylesheet" href="/myweb/css/bootstrap.min.css">
-<link rel="stylesheet" href="/myweb/css/theme/base.css">
-<link rel="stylesheet" href="/myweb/css/theme/dark.css">
+<!-- 示範 cg\html\stylesheet() -->
+<link rel="stylesheet" href="//your_host/myweb/css/bootstrap.min.css">
+<link rel="stylesheet" href="//your_host/myweb/css/theme/base.css">
+<link rel="stylesheet" href="//your_host/myweb/css/theme/dark.css">
+
+</head>
 
 <body>
 
-<p>goto: <a href="/myweb/index.php">home</a>.
+<div>
+<!-- 示範 cg\html\resource_url('images/logo.png') -->
+<img src="//your_host/myweb/images/logo.png">
+</div>
+
+<!-- 示範 cg\html\home_url() -->
+<p>goto: <a href="//your_host/myweb/index.php">home</a>.
 </p>
 
-<p>goto: <a href="/myweb/index.php/profile">profile</a>.
+<!-- 示範 cg\html\request_url('profile') -->
+<p>goto: <a href="//your_host/myweb/index.php/profile">profile</a>.
 </p>
 
-<script src="/myweb/js/jquery-3.3.1.slim.min.js"></script>
-<script src="/myweb/js/popper.min.js"></script>
-<script src="/myweb/js/bootstrap.min.js"></script>
+<!-- 示範 cg\html\script() -->
+<script src="//your_host/myweb/js/jquery-3.3.1.slim.min.js"></script>
+<script src="//your_host/myweb/js/popper.min.js"></script>
+<script src="//your_host/myweb/js/bootstrap.min.js"></script>
 
-<script>
-</script>
 </body>
 </html>
 
