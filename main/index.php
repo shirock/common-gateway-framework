@@ -70,15 +70,6 @@ class HttpResponse
         509 =>  'Bandwidth Limit Exceeded'
     );
 
-    /*
-    //由此段程式產生下列常數定義的程式碼。
-    foreach (HttpResponse::$status as $c => $w) {
-        $ws = preg_split('/[\s\-]/', $w);
-        $w = strtoupper(implode('_', $ws));
-        echo "    const $w = $c;\n";
-        //define($w, $c);
-    }
-    */
     //const CONTINUE = 100; // 'continue' is a keyword, could not used in constant.
     const SWITCHING_PROTOCOLS = 101;
     const PROCESSING = 102;
@@ -147,6 +138,7 @@ class HttpResponse
             echo "{$statusCode} {$message}";
             exit;
         }
+        return $statusCode;
     }
 
     static function exception($statusCode, $message = false)
@@ -315,6 +307,29 @@ class CommonGateway
                 array_pop($this->segments);
         }
 
+        // only look first option.
+        if (isset($_SERVER['HTTP_ACCEPT'])) {
+            // the content of http header of Accept looks like:
+            // Accept: text/plain; q=0.9, application/xml+html; q=0.1
+            $http_accept = explode(',', $_SERVER['HTTP_ACCEPT']);
+
+            // some clients will always insert '*/*' in the first option. skip it.
+            if ($http_accept[0] == '*/*') { 
+                array_shift($http_accept);
+            }
+
+            if (empty($http_accept)) {
+                $http_accept[0] = 'text/html';
+            }
+
+            header('Content-Type: ' . $http_accept[0] .'; charset=utf-8');
+            list($tmp, $http_accept_ext) = explode('/', $http_accept[0]);
+            // $http_accept_ext would be the extension name of document type.
+            // ex: '*', 'json', 'xml', etc.
+            if ($http_accept_ext != '*')
+                $this->request_document_type = $http_accept_ext;
+        }
+
         $app_config = $this->loadAppConfig();
 
         $control_seg = array_shift($this->segments);
@@ -333,12 +348,10 @@ class CommonGateway
             else
                 $content_type = '';
 
-            # See issue #7
-            # and http://php.net/manual/en/wrappers.php.php
+            # http://php.net/manual/en/wrappers.php.php
             $this->raw_request_data = file_get_contents('php://input');
 
-            # See issue #7
-            # and http://php.net/manual/en/ini.core.php#ini.always-populate-raw-post-data
+            # http://php.net/manual/en/ini.core.php#ini.always-populate-raw-post-data
             $GLOBALS['HTTP_RAW_POST_DATA'] = $this->raw_request_data;
 
             # Form content types
@@ -375,32 +388,7 @@ class CommonGateway
         }
 
         $this->injectResource($this->control, 'config', $app_config);
-
         $this->injectResource($this->control, 'request', $request_vars);
-
-        // I just look the first option.
-        if (isset($_SERVER['HTTP_ACCEPT'])) {
-            // the content of http header of Accept looks like:
-            // Accept: text/plain; q=0.9, application/xml+html; q=0.1
-            $http_accept = explode(',', $_SERVER['HTTP_ACCEPT']);
-
-            // some clients will always insert '*/*' in the first option. skip it.
-            if ($http_accept[0] == '*/*') { 
-                array_shift($http_accept);
-            }
-
-            if (empty($http_accept)) {
-                $http_accept[0] = 'text/html';
-            }
-
-            header('Content-Type: ' . $http_accept[0] .'; charset=utf-8');
-            list($tmp, $http_accept_ext) = explode('/', $http_accept[0]);
-            // $http_accept_ext would be the extension name of document type.
-            // ex: '*', 'json', 'xml', etc.
-            if ($http_accept_ext != '*')
-                $this->request_document_type = $http_accept_ext;
-        }
-
         $this->injectResource($this->control, 'request_document_type', $this->request_document_type);
     }
 
@@ -515,29 +503,33 @@ class CommonGateway
     }
 
     private $is_authorized = false;
+    private $authorize_called_count = 0;
+    // authorize() 有狀態。
+    // 第一次傳 class 檢查控制項，第二次傳 method 檢查方法。
 
     /**
-     * 若控制項註記 @authorize ，則需經過認證。
-     * 若控制項方法註記 @authorize ，則需經過認證。
+     * 若控制項註記 @authorize ，則調用此控制項全部方法皆需認證。
+     * 若控制項方法註記 @authorize ，則調用此方法需認證。
      * 
      * 認證用控制項為 Authorize 或 Login 。
      * 授權時，必須設定 $_SESSION['Authorization'] 為任意值，有效值甚至包括 false 。
      * index.php 僅依 isset($_SESSION['Authorization']) 判定是否授權。
      */
-    protected function authorize($target, $is_reflect = false)
+    protected function authorize($target)
     {
-        // 若 class 已註記 @authorize ，就表示全部方法都要求授權。
-        // 就不再判斷 method 是否註記 @authorize 。
-        if ($this->is_authorized) {
+        if ($this->authorize_called_count >= 2)
             return;
-        }
+        ++$this->authorize_called_count;
 
-        $ro = ($is_reflect ? $target : new ReflectionObject($target));
-        $doc = $ro->getDocComment();
-        if (preg_match("/@authorize\s/", $doc, $m) > 0) {
-            $this->is_authorized = true;
+        // 若第一次檢查控制項就設 is_authorized 為 true ，表示這控制項全部方法都獲得授權了。
+        if ($this->is_authorized)
+            return;
+
+        $doc = $target->getDocComment();
+        if (preg_match("/@authorize\s/", $doc, $m) > 0) { // 有 @authorize 註記
             $this->startSession();
             if (isset($_SESSION['Authorization'])) {
+                $this->is_authorized = true;
                 return;
             }
 
@@ -545,14 +537,13 @@ class CommonGateway
             if ($this->request_document_type != 'html')
                 HttpResponse::unauthorized();
 
-            // 認證用控制項為 Authorize 或 Login
+            // 轉向到認證用控制項， Authorize 或 Login
             if (file_exists($this->makeControlFilepath('Authorize')))
                 $authorize_control = 'Authorize';
             else 
                 $authorize_control = 'Login';
 
             $authorize_path = self::makeURL($authorize_control);
-            // echo 'redirect to ', $authorize_path;
             header("Location: $authorize_path");
             exit;
         }
@@ -615,6 +606,15 @@ class CommonGateway
         require_once $control_filepath;
 
         $control_class_name = $this->app_name;
+
+        if ($this->app_name == 'Login' or $this->app_name == 'Authorize') {
+            // 這是負責認證工作的控制項，啟動 session 
+            $this->startSession();
+        }
+        else {
+            $this->authorize(new ReflectionClass($control_class_name));
+        }
+
         $this->control = new $control_class_name;
     }
 
@@ -634,14 +634,6 @@ class CommonGateway
     {
         if ( $this->control === null) {
             return $this->index();
-        }
-
-        if ($this->app_name == 'Login' or $this->app_name == 'Authorize') {
-            // 目標是負責認證工作的控制項，需要開始 session 
-            $this->startSession();
-        }
-        else {
-            $this->authorize($this->control);
         }
 
         if ( empty($this->segments) and $_SERVER['REQUEST_METHOD'] == 'GET') { // Without parameter
@@ -687,7 +679,7 @@ class CommonGateway
             HttpResponse::bad_request();
         }
 
-        $this->authorize($ref_method, true);
+        $this->authorize($ref_method);
 
         $method_parameters = $ref_method->getParameters();
         // 若定義了第一個參數為array，則PATH參數陣列將會直接傳入。
