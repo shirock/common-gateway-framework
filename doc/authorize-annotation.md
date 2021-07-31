@@ -5,6 +5,8 @@ CommonGateway 以 @authorize 註記代為處理認證授權的流程。
 設計人員需要設計認證用控制項。並在
 其他要求授權的控制項方法 doc 中加上 @authorize 。
 
+使用範例: [RESTful API 認證](../demo/api-authorize)。
+
 Required: php 7.3.0
 
 * authorize v.

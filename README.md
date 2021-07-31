@@ -17,3 +17,5 @@ CommonGateway 為設計人員完成下列工作:
 * 它會儘量透過外部注入的方式，將其他資源放入控制項 (即 IoC 模式)，減少對原有程式碼的侵入性。
 
 更多內容請參閱: [CommonGateway 介紹](http://rocksaying.tw/archives/21318202.html) 。
+
+使用範例請見 [demo目錄](demo)。api 開頭的是 RESTful API 設計範例。 web 開頭的是網站設計範例。 default 開頭的是預設功能範例。
