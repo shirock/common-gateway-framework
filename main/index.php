@@ -11,6 +11,34 @@ if (PHP_SAPI == 'cli') {
     $_POST = array('name' => 'rock');
 }
 
+// follow PSR-0: Autoloading Standard
+// CG 從目錄 classes 和 libs 找。
+// 其他自訂的 autoload 則寫在 vendor/autoload.php 。
+spl_autoload_register(function($fqnc) {
+    $fqnc = ltrim($fqnc, '\\'); // fully-qualified namespace and class
+
+    if ($sep = strrpos($fqnc, '\\')) {
+        $ns_path = str_replace('\\', DIRECTORY_SEPARATOR, substr($fqnc, 0, $sep)) . DIRECTORY_SEPARATOR;
+        $class_name = substr($fqnc, $sep + 1);
+    }
+    else {
+        $ns_path = '';
+        $class_name = $fqnc;
+    }
+    $cls_path = str_replace('_', DIRECTORY_SEPARATOR, $class_name);
+    $src_path1 = DIRECTORY_SEPARATOR . $ns_path . $cls_path . '.php';
+
+    $src_path = 'classes' . $src_path1;
+    if (!file_exists($src_path))
+        $src_path = 'libs' . $src_path1;
+
+    if (file_exists($src_path))
+        require $src_path;
+});
+
+if (file_exists('vendor/autoload.php'))
+    require 'vendor/autoload.php';
+
 class HttpResponse
 {
     // See http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
