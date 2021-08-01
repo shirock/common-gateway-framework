@@ -1,0 +1,22 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>
+網站登入範例 - 會員列表
+</h1>
+
+<ul>
+    <?php foreach ($list as $username): ?>
+    <li><a href="<?=cg\html\request_url('Address/'.$username)?>"><?=$username?></a></li>
+    <?php endforeach ?>
+</ul>
+
+<p>
+    回到 <a href="<?=cg\html\request_url('Authorize')?>">首頁</a>。
+</p>
+</body>
+</html>

@@ -1,0 +1,30 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>
+網站登入範例
+</h1>
+
+<?php if (isset($_SESSION['Authorization'])): ?>
+    <p>
+        登入成功
+    </p>
+<?php else: ?>
+    <p>
+        登入失敗
+    </p>
+<?php endif ?>
+
+<p>
+    回到 <a href="<?=cg\html\request_url('Authorize')?>">首頁</a>。
+</p>
+<p>
+    本範例的登入畫面就是首頁。但實務上應設計一個專門的首頁。
+    可參考 <a href="https://github.com/shirock/common-gateway-framework/tree/main/demo/default-home-controller">default-home-controller</a> 建立首頁。
+</p>
+</body>
+</html>

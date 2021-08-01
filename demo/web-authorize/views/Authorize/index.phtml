@@ -1,0 +1,52 @@
+<html>
+<head>
+<meta charset="utf-8">
+</head>
+
+<body>
+
+<h1>
+網站登入範例
+</h1>
+
+<p>
+    示範 username: rock. password: hello.
+</p>
+
+<?php if (isset($_SESSION['Authorization'])): ?>
+    
+    <p>
+        使用者: <?=$_SESSION['Authorization']['name']?>
+    </p>
+
+    <p>
+        <a href="<?=cg\html\request_url('Authorize/delete')?>">登出</a>
+    </p>
+
+<?php else: ?>
+
+<form method="POST">
+    <div>
+        <label>Username: </label><input type="text" name="username">
+    </div>
+    <div>
+        <label>Password: </label><input type="passwrod" name="password">
+    </div>
+    <div>
+        <button type="submit">Login</button>
+    </div>
+</form>
+
+<?php endif ?>
+
+<p>
+        功能選擇:
+</p>
+<ul>
+    <li><a href="<?=cg\html\request_url('MemberList')?>">會員列表</a>。 MemberList 控制項要求認證，所以未登入前會被導向回到登入頁。</li>
+    <li><a href="<?=cg\html\request_url('Address')?>">地址</a>。 Address 控制項的 index 方法不要求認證，所以未登入前也可以看。</li>
+    <li><a href="<?=cg\html\request_url('Address/rock')?>">Rock的地址</a>。 Address 控制項的 get 方法要求認證，所以未登入前會被導向回到登入頁。</li>
+</ul>
+
+</body>
+</html>
