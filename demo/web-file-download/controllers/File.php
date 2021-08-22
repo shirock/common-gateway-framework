@@ -26,6 +26,7 @@ class File
         // 又是 filename* 又是連續兩個單引號，這 header 雖然奇怪，
         // 但確實是 HTTP 協定的「正式」用法。
         // 然而有些瀏覽器只認後面那個 filename 。
+        header('Content-Length:' . filesize('demo.png'));
 
         readfile('demo.png');
         return HttpResponse::OK;
