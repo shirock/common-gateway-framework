@@ -4,10 +4,10 @@
 
 * [CommonGateway 介紹](https://www.rocksaying.tw/archives/21318202.html)
 * [CommonGateway 初步](https://www.rocksaying.tw/archives/21320836.html)
-* [CommonGateway初步第二篇 - JSON 的處理與資料上傳](https://www.rocksaying.tw/archives/21334380.html)
-* [CommonGateway JSON 處理之自動回傳](https://www.rocksaying.tw/archives/44123533.html)
+* [CommonGateway 第二步 - JSON 的處理與資料上傳](https://www.rocksaying.tw/archives/21334380.html)
 * [CommonGateway 控制項動作函數回傳狀態碼的作法](https://www.rocksaying.tw/archives/44121826.html)
 * [CommonGateway Authorize 認證註記功能教學](https://www.rocksaying.tw/archives/2021/CommonGateway_authorize.html)
+* [HTML公用函數與預設首頁](https://www.rocksaying.tw/archives/2021/CommonGateway_HTML%E5%85%AC%E7%94%A8%E5%87%BD%E6%95%B8%E8%88%87%E9%A0%90%E8%A8%AD%E9%A6%96%E9%A0%81.html)
 
 ## 功能索引
 
