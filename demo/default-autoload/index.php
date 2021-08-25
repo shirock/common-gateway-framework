@@ -11,6 +11,9 @@ if (PHP_SAPI == 'cli') {
     $_POST = array('name' => 'rock');
 }
 
+// follow PSR-0: Autoloading Standard
+// CG 從目錄 classes, libs, controllers 找。
+// 其他自訂的 autoload 則寫在 vendor/autoload.php 。
 spl_autoload_register(function($fqnc) {
     $fqnc = ltrim($fqnc, '\\'); // fully-qualified namespace and class
 
@@ -25,12 +28,13 @@ spl_autoload_register(function($fqnc) {
     $cls_path = str_replace('_', DIRECTORY_SEPARATOR, $class_name);
     $src_path1 = DIRECTORY_SEPARATOR . $ns_path . $cls_path . '.php';
 
-    $src_path = 'classes' . $src_path1;
-    if (!file_exists($src_path))
-        $src_path = 'libs' . $src_path1;
-
-    if (file_exists($src_path))
-        require $src_path;
+    foreach (['classes', 'libs', 'controllers'] as $d) {
+        $src_path = $d . $src_path1;
+        if (file_exists($src_path)) {
+            require $src_path;
+            break;
+        }
+    }
 });
 
 if (file_exists('vendor/autoload.php'))
@@ -581,6 +585,7 @@ class CommonGateway
             return false;
         }
 
+        $raw_name = $name;
         $name = strtolower($name); // 消除大小寫差異。
 
         // 若這是包含 _ 的名稱，先拆字。
@@ -592,28 +597,28 @@ class CommonGateway
         for ($case_f = 0; $case_f < 5; ++$case_f) {
             switch ($case_f) {
             case 0:
-                // case: search directly by name.
-                $file_name = $name;
+                // case: search directly by raw name.
+                $app_name = $raw_name;
                 break;
             case 1:
                 // case: name is 'abc', search for 'Abc.php';
-                $file_name = ucfirst($name);
+                $app_name = ucfirst($name);
                 break;
             case 2:
                 // case: name is 'abc_def', search 'Abc_Def.php'.
-                $file_name = implode('_', $ws);
+                $app_name = implode('_', $ws);
                 break;
             case 3:
                 // case: name is 'abc_def', search 'AbcDef.php'.
-                $file_name = implode('', $ws);
+                $app_name = implode('', $ws);
                 break;
             default:
                 break;
             }
 
-            $component_filepath = $this->makeControlFilepath($file_name);
+            $component_filepath = $this->makeControlFilepath($app_name);
             if ( file_exists($component_filepath) ) {
-                return ucfirst($file_name);
+                return ucfirst($app_name);
             }
         }
         return false;
