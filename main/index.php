@@ -735,6 +735,25 @@ class CommonGateway
 
     function render($model = null)
     {
+        // 根據服務名稱與 HTTP 標頭的 Accept 內容，載入對應的視圖。
+        // 視圖的副檔名按 Ruby on Rails 型式，開頭為 p ，後接文件型態名稱。
+        // 例如 HTML 文件的視圖，副檔名為 phtml 。
+        // 比較特別的是 JSON 文件的視圖，其副檔名為 pjs ，不是 pjson 。
+        if ($this->request_document_type == 'json' or $this->request_document_type == 'javascript')
+            $_ext_name = 'js';
+        else
+            $_ext_name = $this->request_document_type;
+
+        // 若控制項方法回傳 cg\View 實例，表示自行指定 View ，而不按預設規則載入。
+        if (is_object($model) and get_class($model) == 'cg\\View') {
+            $_view_filepath = "views/{$model->viewName}.p{$_ext_name}";
+            $model = $model->model;
+        }
+        else {
+            // RoR style's view name.
+            $_view_filepath = "views/{$this->app_name}/{$this->action}.p{$_ext_name}";
+        }
+
         // 以控制項的公開屬性為資料來源
         if ($model === null or $model === true)
             $model = get_object_vars($this->control);
@@ -743,28 +762,8 @@ class CommonGateway
             extract($model, EXTR_PREFIX_INVALID, 'data');
         // 分配 $model 一個和控制項名稱相同但首字母小寫的別名(reference)
         $model_alias = lcfirst($this->app_name);
-        if ((is_object($model) or is_array($model)) and 
-            !isset($$model_alias))
-        {
+        if (!isset($$model_alias) and (is_object($model) or is_array($model)))
             $$model_alias = &$model;
-        }
-
-        // 根據服務名稱與 HTTP 標頭的 Accept 內容，載入對應的視圖。
-        // 視圖的副檔名按 Ruby on Rails 型式，開頭為 p ，後接文件型態名稱。
-        // 例如 HTML 文件的視圖，副檔名為 phtml 。
-        // 比較特別的是 JSON 文件的視圖，其副檔名為 pjs ，不是 pjson 。
-        if ($this->request_document_type == 'json' or
-            $this->request_document_type == 'javascript')
-        {
-            $_ext_name = 'js';
-        } 
-        else 
-        {
-            $_ext_name = $this->request_document_type;
-        }
-
-        // RoR style's view name.
-        $_view_filepath = "views/{$this->app_name}/{$this->action}.p{$_ext_name}";
 
         if (file_exists($_view_filepath)) {
             include_once $_view_filepath;
@@ -867,6 +866,18 @@ class Controller
             }
         }
         return $files;
+    }
+}
+
+class View
+{
+    public $viewName;
+    public $model;
+
+    public function __construct(string $view_name, $model = null)
+    {
+        $this->viewName = $view_name;
+        $this->model = $model;
     }
 }
 } // end namespace cg
