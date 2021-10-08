@@ -525,6 +525,7 @@ class CommonGateway
             }
         }
 
+        session_set_cookie_params(['path' => dirname($_SERVER['SCRIPT_NAME'])]);
         if ($options)
             session_set_cookie_params($options);
 
