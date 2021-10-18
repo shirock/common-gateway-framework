@@ -153,9 +153,9 @@ class HttpResponse
     const INSUFFICIENT_STORAGE = 507;
     const BANDWIDTH_LIMIT_EXCEEDED = 509;
 
-    static function status($statusCode, $message = false, $exit_program = true)
+    static function status($statusCode, $message = null, $exit_program = true)
     {
-        if ($message == false) {
+        if ($message == null) {
             if (isset(self::$status[$statusCode]))
                 $message = self::$status[$statusCode];
             else
@@ -170,7 +170,7 @@ class HttpResponse
         return $statusCode;
     }
 
-    static function exception($statusCode, $message = false)
+    static function exception($statusCode, $message = null)
     {
         self::status($statusCode, $message, true);
     }
@@ -178,123 +178,123 @@ class HttpResponse
     /**
     以下回應方法都是回報錯誤狀態。呼叫後就會結束程式。
      */
-    static function bad_request($msg=false)
+    static function bad_request($msg=null)
     {
         self::exception(HttpResponse::BAD_REQUEST, $msg);
     }
 
     // PSR-1 name style
-    static function badRequest($msg=false)
+    static function badRequest($msg=null)
     {
         self::bad_request($msg);
     }
 
-    static function unauthorized($msg=false)
+    static function unauthorized($msg=null)
     {
         self::exception(HttpResponse::UNAUTHORIZED, $msg);
     }
 
-    static function payment_required($msg=false)
+    static function payment_required($msg=null)
     {
         self::exception(HttpResponse::PAYMENT_REQUIRED, $msg);
     }
 
-    static function paymentRequired($msg=false)
+    static function paymentRequired($msg=null)
     {
         self::payment_required($msg);
     }
 
-    static function forbidden($msg=false)
+    static function forbidden($msg=null)
     {
         self::exception(HttpResponse::FORBIDDEN, $msg);
     }
 
-    static function not_found($msg=false)
+    static function not_found($msg=null)
     {
         self::exception(HttpResponse::NOT_FOUND, $msg);
     }
 
-    static function notFound($msg=false)
+    static function notFound($msg=null)
     {
         self::not_found($msg);
     }
 
-    static function method_not_allowed($msg=false)
+    static function method_not_allowed($msg=null)
     {
         self::exception(HttpResponse::METHOD_NOT_ALLOWED, $msg);
     }
 
-    static function methodNotAllowed($msg=false)
+    static function methodNotAllowed($msg=null)
     {
         self::method_not_allowed($msg);
     }
 
-    static function not_acceptable($msg=false)
+    static function not_acceptable($msg=null)
     {
         self::exception(HttpResponse::NOT_ACCEPTABLE, $msg);
     }
 
-    static function notAcceptable($msg=false)
+    static function notAcceptable($msg=null)
     {
         self::not_acceptable($msg);
     }
 
-    static function request_timeout($msg=false)
+    static function request_timeout($msg=null)
     {
         self::exception(HttpResponse::REQUEST_TIMEOUT, $msg);
     }
 
-    static function requestTimeout($msg=false)
+    static function requestTimeout($msg=null)
     {
         self::request_timeout($msg);
     }
 
-    static function conflict($msg=false)
+    static function conflict($msg=null)
     {
         self::exception(HttpResponse::CONFLICT, $msg);
     }
 
-    static function gone($msg=false)
+    static function gone($msg=null)
     {
         self::exception(HttpResponse::GONE, $msg);
     }
 
-    static function internal_server_error($msg=false)
+    static function internal_server_error($msg=null)
     {
         self::exception(HttpResponse::INTERNAL_SERVER_ERROR, $msg);
     }
 
-    static function internalServerError($msg=false)
+    static function internalServerError($msg=null)
     {
         self::internal_server_error($msg);
     }
 
-    static function not_implemented($msg=false)
+    static function not_implemented($msg=null)
     {
         self::exception(HttpResponse::NOT_IMPLEMENTED, $msg);
     }
 
-    static function notImplemented($msg=false)
+    static function notImplemented($msg=null)
     {
         self::not_implemented($msg);
     }
 
-    static function bad_gateway($msg=false) 
+    static function bad_gateway($msg=null) 
     {
         self::exception(HttpResponse::BAD_GATEWAY , $msg);
     }
 
-    static function badGateway($msg=false) 
+    static function badGateway($msg=null) 
     {
         self::bad_gateway($msg);
     }
 
-    static function service_unavailable($msg=false)
+    static function service_unavailable($msg=null)
     {
         self::exception(HttpResponse::SERVICE_UNAVAILABLE, $msg);
     }
 
-    static function serviceUnavailable($msg=false)
+    static function serviceUnavailable($msg=null)
     {
         self::service_unavailable($msg);
     }
@@ -425,7 +425,7 @@ class CommonGateway
      * 取得基於 index.php 的 URL 路徑。
      * 不指定 $path 時，回傳 index.php 的 URL 。
      */
-    public static function makeURL($path = false)
+    public static function makeURL($path = null)
     {
         $root = $_SERVER['SCRIPT_NAME'];
         if (!$path) {
@@ -825,11 +825,6 @@ namespace cg
 {
 class Controller
 {
-    public function index()
-    {
-        echo 'index...';
-    }
-
     /**
      Laod uploaded files form $_FILES or $_POST (JSON only).
      1. 此方法不會保留上傳檔案的原本名稱。忽略 $_FILES 的 'name' 欄位。
@@ -885,13 +880,16 @@ class View
 
 namespace cg\html 
 {
-    // base on index.php/$controller_path
-    function request_url($controller_path = false)
+    /**
+     * get request url. example:
+     * "//HOST/index.php" or
+     * "//HOST/index.php/$controller_path"
+     */
+    function request_url($controller_path = null)
     {
         $root = '//' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
-        if ($controller_path) {
+        if ($controller_path)
             $root .= '/' . $controller_path;
-        }
         return $root;
     }
 
@@ -900,45 +898,51 @@ namespace cg\html
         return request_url();
     }
 
-    // redirect to $fullpath/index.php or $fullpath/index.php/controller_path
-    function redirect($controller_path = false)
+    /** redirect to $fullpath/index.php or $fullpath/index.php/controller_path */
+    function redirect($controller_path = null)
     {
         header('Location: ' . request_url($controller_path));
     }
 
-    function resource_url($path = false)
+    function resource_url(string $path = null)
     {
         $root = dirname($_SERVER['SCRIPT_NAME']);
-        if (!$path) {
-            return $root;
+        if ($root == '\\' or $root == '/') {
+            if (!$path)
+                return '/';
+            else
+                return '/' . $path;
         }
+        if (!$path)
+            return $root;
         return $root . '/' . $path;
     }
 
+    /** Output stylesheet markup */
     function stylesheet($srcs)
     {
         if (is_array($srcs)) {
-            foreach ($srcs as $src) {
+            foreach ($srcs as $src)
                 echo '<link rel="stylesheet" href="', resource_url($src), '">', "\n";
-            }
         }
         else {
             echo '<link rel="stylesheet" href="', resource_url($srcs), '">', "\n";
         }
     }
 
+    /** Output script markup */
     function script($srcs)
     {
         if (is_array($srcs)) {
-            foreach ($srcs as $src) {
+            foreach ($srcs as $src)
                 echo '<script src="', resource_url($src), '"></script>', "\n";
-            }
         }
         else {
             echo '<script src="', resource_url($srcs), '"></script>', "\n";
         }
     }
 
+    /** Output refresh meta markup */
     function refresh($seconds)
     {
         echo '<meta http-equiv="refresh" content="', $seconds, '">', "\n";
