@@ -21,3 +21,5 @@ CommonGateway 會先調用控制項方法，並接收方法回傳值。然後按
 * 若為 array 或 object ，則視圖內將同時分配一個和控制項名稱相同的別名(首字母小寫)。
   例如控制項 MyBook 回傳的資料為 object ，包含一個資料欄位 Title 。
   則在視圖內，可用 $model-&gt;Title 或 $myBook-&gt;Title 取得 Title 內容。
+* 若為 cg\View 實體 (instance of cg\View class)，則根據 View 實體的 viewName 屬性載入指定的視圖。
+  請看 [CommonGateway 的 View 類別](cg-view-class.md) 。

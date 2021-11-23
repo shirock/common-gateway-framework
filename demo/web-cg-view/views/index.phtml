@@ -1,0 +1,27 @@
+<html>
+<head>
+<meta charset="utf-8">
+<title>讓控制項自己指定要用的視圖</title>
+</head>
+
+<body>
+
+<h1>讓控制項自己指定要用的視圖</h1>
+
+<p>
+CommonGateway Framework 預設規則是按照控制項方法名稱載入同名視圖。
+例如調用 App1.index() 控制項方法之後，默認載入 views/App1/index 視圖。
+</p>
+
+<p>
+使用 cg\View 類別，讓控制項方法自行指定視圖，而不是由 CommonGateway Framework 決定視圖。
+這個方式讓不同的控制項方法共用同一個視圖，減少重複的視圖文件。
+例如不同的控制項共用同一個錯誤訊息視圖。
+</p>
+
+<ul>
+    <li><a href="<?=cg\html\request_url('App1')?>">App1 index</a></li>
+    <li><a href="<?=cg\html\request_url('App2')?>">App2 index</a></li>
+</ul>
+
+</html>

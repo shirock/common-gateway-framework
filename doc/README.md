@@ -14,6 +14,7 @@
 * [認證授權註記 Authorize annotation](authorize-annotation.md)
 * [CommonGateway Autoload 規則](autoload.md)
 * [CommonGateway 的 HTML 公用函數](cg-html-functions.md)
+* [CommonGateway 的 View 類別](cg-view-class.md)
 * [CommonGateway 與 CodeIgniter 的對照](CommonGatewayAndCodeIgniter.md)
 * [CommonGateway 的預設首頁](homepage.md)
 * [資源注入 resource-inject](resource-inject.md)
