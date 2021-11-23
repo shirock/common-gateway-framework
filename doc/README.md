@@ -8,6 +8,7 @@
 * [CommonGateway 控制項動作函數回傳狀態碼的作法](https://www.rocksaying.tw/archives/44121826.html)
 * [CommonGateway Authorize 認證註記功能教學](https://www.rocksaying.tw/archives/2021/CommonGateway_authorize.html)
 * [HTML公用函數與預設首頁](https://www.rocksaying.tw/archives/2021/CommonGateway_HTML%E5%85%AC%E7%94%A8%E5%87%BD%E6%95%B8%E8%88%87%E9%A0%90%E8%A8%AD%E9%A6%96%E9%A0%81.html)
+* [讓控制項指定自己要用的視圖](https://www.rocksaying.tw/archives/2021/CommonGateway_View.html)
 
 ## 功能索引
 
