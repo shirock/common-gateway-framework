@@ -1,6 +1,8 @@
 Authorize 註記應用於 網站設計 之範例
 =======================================
 
+實作說明請看 [Authorize 認證註記功能教學](https://www.rocksaying.tw/archives/2021/CommonGateway_authorize.html)。
+
 * 建立一個名為 Authorize 的控制項(controller): 實作 index(), post() 與 delete()。
 * Authorize 建立視圖 index.phtml 顯示登入表單，視圖 post.phtml 顯示登入認證結果。
 * 建立 MemberList 控制項，此控制項全部方法皆要求授權。
