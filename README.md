@@ -1,6 +1,8 @@
 # CommonGateway Framework
 
-PHP version request: 7.3 or above.
+PHP version request: 7.3 ~ 8.1. 7.0 may also usable.
+
+我測試了 PHP 8.1 的相容性，沒問題 (2022年)。
 
 ## 介紹
 
