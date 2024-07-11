@@ -6,7 +6,7 @@ PHP version request: 7.3 ~ 8.1. 7.0 may also usable.
 
 ## 介紹
 
-CommanGateway Framework 是一個極小化的 PHP Web 框架。它的主程式就只有一個檔案 - index.php 。我原先甚至不將它稱為 framework ，而只是一個導入器。但解釋麻煩，還是按一般認知，當它是框架吧。
+CommanGateway Framework 是一個極小化的 PHP Web 框架。它的主程式就只有一個檔案 - [index.php](main/index.php) 。我原先甚至不將它稱為 framework ，而只是一個導入器。但解釋麻煩，還是按一般認知，當它是框架吧。
 
 CommonGateway 主要設計目的是用於設計 RESTful API 或是 Single page web app 。它按照 MVC 的設計模式，將 Web 應用服務分成三個部份，即資料模型(Model)、流程控制項(Controller)與視圖(View)。 CommonGateway 替設計人員處理控制項與視圖工作。至於資料模型則不是 CommonGateway 的責任。資料模型由設計人員透過其偏好的資料庫框架處理。
 
@@ -21,3 +21,5 @@ CommonGateway 為設計人員完成下列工作:
 更多內容請參閱: [CommonGateway 介紹](http://rocksaying.tw/archives/21318202.html) 。
 
 使用範例請見 [demo目錄](demo)。api 開頭的是 RESTful API 設計範例。 web 開頭的是網站設計範例。 default 開頭的是預設功能範例。
+
+注意， demo 下的 index.php 可能是舊版本。請下載 [main/index.php](main/index.php) 。
