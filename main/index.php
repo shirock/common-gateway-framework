@@ -882,14 +882,24 @@ namespace cg\html
 {
     /**
      * get request url. example:
-     * "//HOST/index.php" or
-     * "//HOST/index.php/$controller_path"
+     * request_url() = "//HOST/index.php" or
+     * request_url('control') = "//HOST/index.php/control"
+     * request_url('control', 123, 'abc') = "//HOST/index.php/control/123/abc"
+     * request_url('control', [123, 'abc']) = "//HOST/index.php/control/123/abc"
      */
-    function request_url($controller_path = null)
+    function request_url($controller_path = null, ...$args)
     {
-        $root = '//' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
-        if ($controller_path)
-            $root .= '/' . $controller_path;
+        $root = sprintf('//%s%s', $_SERVER['HTTP_HOST'], $_SERVER['SCRIPT_NAME']);
+        if ($controller_path) {
+            if (empty($args)) {
+                $root = sprintf('%s/%s', $root, $controller_path);
+            }
+            else {
+                if (is_array($args[0]))
+                    $args = $args[0];
+                $root = sprintf('%s/%s/%s', $root, $controller_path, implode('/', $args));
+            }
+        }
         return $root;
     }
 
@@ -899,46 +909,42 @@ namespace cg\html
     }
 
     /** redirect to $fullpath/index.php or $fullpath/index.php/controller_path */
-    function redirect($controller_path = null)
+    function redirect($controller_path = false, ...$args)
     {
-        header('Location: ' . request_url($controller_path));
+        header('Location: ' . request_url($controller_path, ...$args));
     }
 
-    function resource_url(string $path = null)
+    function resource_url(...$path_segments)
     {
         $root = dirname($_SERVER['SCRIPT_NAME']);
-        if ($root == '\\' or $root == '/') {
-            if (!$path)
-                return '/';
-            else
-                return '/' . $path;
-        }
-        if (!$path)
+        if ($root == '\\')
+            $root = '/';
+        if (empty($path_segments))
             return $root;
-        return $root . '/' . $path;
+
+        if (is_array($path_segments[0]))
+            $path_segments = $path_segments[0];
+        $real_path = sprintf('%s/%s', $root, implode('/', $path_segments));
+        return $real_path;
     }
 
     /** Output stylesheet markup */
-    function stylesheet($srcs)
+    function stylesheet(...$srcs)
     {
-        if (is_array($srcs)) {
-            foreach ($srcs as $src)
-                echo '<link rel="stylesheet" href="', resource_url($src), '">', "\n";
-        }
-        else {
-            echo '<link rel="stylesheet" href="', resource_url($srcs), '">', "\n";
+        if (is_array($srcs[0]))
+            $srcs = $srcs[0];
+        foreach ($srcs as $src) {
+            echo '<link rel="stylesheet" href="', resource_url($src), '">', "\n";
         }
     }
 
     /** Output script markup */
-    function script($srcs)
+    function script(...$srcs)
     {
-        if (is_array($srcs)) {
-            foreach ($srcs as $src)
-                echo '<script src="', resource_url($src), '"></script>', "\n";
-        }
-        else {
-            echo '<script src="', resource_url($srcs), '"></script>', "\n";
+        if (is_array($srcs[0]))
+            $srcs = $srcs[0];
+        foreach ($srcs as $src) {
+            echo '<script src="', resource_url($src), '"></script>', "\n";
         }
     }
 

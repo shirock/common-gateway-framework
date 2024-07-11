@@ -23,5 +23,39 @@ Home 控制項的必要內容是: 定義 Home 類別，實作 index 方法 (cont
 當你用 CommonGateway Framework 設計一個網站時，建議用這個方式建立你的網站首頁。此途徑可以使用 CommonGateway Framework 提供的所有資源。例如 @resource 、 @authorize 。
 </p>
 
+<p>
+使用 cg\html 空間內的 HTML 函數，取得正確的 URL 路徑。
+</p>
+
+<p>cg\html\home_url() - <a href="<?=cg\html\home_url() ?>">Home</a></p>
+
+<p>cg\html\request_url() - 指向其他控制項</p>
+<ul>
+    <li><a href="<?=cg\html\request_url('App1') ?>">$full_app_path/App1</a></li>
+    <li><a href="<?=cg\html\request_url('App1', 123) ?>">$full_app_path/App1/123</a></li>
+    <li><a href="<?=cg\html\request_url('App1', [123, 'abc']) ?>">$full_app_path/App1/123/abc</a></li>
+</ul>
+
+<p>cg\html\resource_url() - 靜態資源的真正URL</p>
+<ul>
+    <li><a href="<?=cg\html\resource_url('images') ?>">$real_fullpath/images</a></li>
+    <li><a href="<?=cg\html\resource_url('images', 'a.jpg') ?>">$real_fullpath/images/a.jpg</a></li>
+    <li><a href="<?=cg\html\resource_url(['images', 'a.jpg']) ?>">$real_fullpath/images/a.jpg</a></li>
+</ul>
+
+<p>cg\html\stylesheet() - 載入 CSS 的 HTML 內容</p>
+<textarea>
+<?=cg\html\stylesheet('assets/bootstrap.css') ?>
+<?=cg\html\stylesheet('assets/bootstrap.css', 'abc.css') ?>
+<?=cg\html\stylesheet(['assets/bootstrap.css', 'abc.css']) ?>
+</textarea>
+
+<p>cg\html\script() - 載入 Scripts 的 HTML 內容</p>
+<textarea>
+<?=cg\html\script('ajax.js') ?>
+<?=cg\html\script('assets/bootstrap.js', 'ajax.js') ?>
+<?=cg\html\script(['assets/bootstrap.js', 'ajax.js']) ?>
+</textarea>
+
 </body>
 </html>
