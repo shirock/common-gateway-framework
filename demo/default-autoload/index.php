@@ -1,4 +1,17 @@
 <?php
+/*
+This program is free software: you can redistribute it and/or modify it under
+the terms of the GNU General Public License as published by the Free Software
+Foundation, either version 3 of the License, or (at your option) any later 
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT 
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS 
+FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with 
+this program. If not, see <https://www.gnu.org/licenses/>. 
+*/
 namespace 
 {
 // Mock data, TEST ONLY
@@ -153,9 +166,9 @@ class HttpResponse
     const INSUFFICIENT_STORAGE = 507;
     const BANDWIDTH_LIMIT_EXCEEDED = 509;
 
-    static function status($statusCode, $message = false, $exit_program = true)
+    static function status($statusCode, $message = null, $exit_program = true)
     {
-        if ($message == false) {
+        if ($message == null) {
             if (isset(self::$status[$statusCode]))
                 $message = self::$status[$statusCode];
             else
@@ -170,7 +183,7 @@ class HttpResponse
         return $statusCode;
     }
 
-    static function exception($statusCode, $message = false)
+    static function exception($statusCode, $message = null)
     {
         self::status($statusCode, $message, true);
     }
@@ -178,123 +191,123 @@ class HttpResponse
     /**
     以下回應方法都是回報錯誤狀態。呼叫後就會結束程式。
      */
-    static function bad_request($msg=false)
+    static function bad_request($msg=null)
     {
         self::exception(HttpResponse::BAD_REQUEST, $msg);
     }
 
     // PSR-1 name style
-    static function badRequest($msg=false)
+    static function badRequest($msg=null)
     {
         self::bad_request($msg);
     }
 
-    static function unauthorized($msg=false)
+    static function unauthorized($msg=null)
     {
         self::exception(HttpResponse::UNAUTHORIZED, $msg);
     }
 
-    static function payment_required($msg=false)
+    static function payment_required($msg=null)
     {
         self::exception(HttpResponse::PAYMENT_REQUIRED, $msg);
     }
 
-    static function paymentRequired($msg=false)
+    static function paymentRequired($msg=null)
     {
         self::payment_required($msg);
     }
 
-    static function forbidden($msg=false)
+    static function forbidden($msg=null)
     {
         self::exception(HttpResponse::FORBIDDEN, $msg);
     }
 
-    static function not_found($msg=false)
+    static function not_found($msg=null)
     {
         self::exception(HttpResponse::NOT_FOUND, $msg);
     }
 
-    static function notFound($msg=false)
+    static function notFound($msg=null)
     {
         self::not_found($msg);
     }
 
-    static function method_not_allowed($msg=false)
+    static function method_not_allowed($msg=null)
     {
         self::exception(HttpResponse::METHOD_NOT_ALLOWED, $msg);
     }
 
-    static function methodNotAllowed($msg=false)
+    static function methodNotAllowed($msg=null)
     {
         self::method_not_allowed($msg);
     }
 
-    static function not_acceptable($msg=false)
+    static function not_acceptable($msg=null)
     {
         self::exception(HttpResponse::NOT_ACCEPTABLE, $msg);
     }
 
-    static function notAcceptable($msg=false)
+    static function notAcceptable($msg=null)
     {
         self::not_acceptable($msg);
     }
 
-    static function request_timeout($msg=false)
+    static function request_timeout($msg=null)
     {
         self::exception(HttpResponse::REQUEST_TIMEOUT, $msg);
     }
 
-    static function requestTimeout($msg=false)
+    static function requestTimeout($msg=null)
     {
         self::request_timeout($msg);
     }
 
-    static function conflict($msg=false)
+    static function conflict($msg=null)
     {
         self::exception(HttpResponse::CONFLICT, $msg);
     }
 
-    static function gone($msg=false)
+    static function gone($msg=null)
     {
         self::exception(HttpResponse::GONE, $msg);
     }
 
-    static function internal_server_error($msg=false)
+    static function internal_server_error($msg=null)
     {
         self::exception(HttpResponse::INTERNAL_SERVER_ERROR, $msg);
     }
 
-    static function internalServerError($msg=false)
+    static function internalServerError($msg=null)
     {
         self::internal_server_error($msg);
     }
 
-    static function not_implemented($msg=false)
+    static function not_implemented($msg=null)
     {
         self::exception(HttpResponse::NOT_IMPLEMENTED, $msg);
     }
 
-    static function notImplemented($msg=false)
+    static function notImplemented($msg=null)
     {
         self::not_implemented($msg);
     }
 
-    static function bad_gateway($msg=false) 
+    static function bad_gateway($msg=null) 
     {
         self::exception(HttpResponse::BAD_GATEWAY , $msg);
     }
 
-    static function badGateway($msg=false) 
+    static function badGateway($msg=null) 
     {
         self::bad_gateway($msg);
     }
 
-    static function service_unavailable($msg=false)
+    static function service_unavailable($msg=null)
     {
         self::exception(HttpResponse::SERVICE_UNAVAILABLE, $msg);
     }
 
-    static function serviceUnavailable($msg=false)
+    static function serviceUnavailable($msg=null)
     {
         self::service_unavailable($msg);
     }
@@ -425,7 +438,7 @@ class CommonGateway
      * 取得基於 index.php 的 URL 路徑。
      * 不指定 $path 時，回傳 index.php 的 URL 。
      */
-    public static function makeURL($path = false)
+    public static function makeURL($path = null)
     {
         $root = $_SERVER['SCRIPT_NAME'];
         if (!$path) {
@@ -525,6 +538,7 @@ class CommonGateway
             }
         }
 
+        session_set_cookie_params(['path' => dirname($_SERVER['SCRIPT_NAME'])]);
         if ($options)
             session_set_cookie_params($options);
 
@@ -735,6 +749,25 @@ class CommonGateway
 
     function render($model = null)
     {
+        // 根據服務名稱與 HTTP 標頭的 Accept 內容，載入對應的視圖。
+        // 視圖的副檔名按 Ruby on Rails 型式，開頭為 p ，後接文件型態名稱。
+        // 例如 HTML 文件的視圖，副檔名為 phtml 。
+        // 比較特別的是 JSON 文件的視圖，其副檔名為 pjs ，不是 pjson 。
+        if ($this->request_document_type == 'json' or $this->request_document_type == 'javascript')
+            $_ext_name = 'js';
+        else
+            $_ext_name = $this->request_document_type;
+
+        // 若控制項方法回傳 cg\View 實例，表示自行指定 View ，而不按預設規則載入。
+        if (is_object($model) and get_class($model) == 'cg\\View') {
+            $_view_filepath = "views/{$model->viewName}.p{$_ext_name}";
+            $model = $model->model;
+        }
+        else {
+            // RoR style's view name.
+            $_view_filepath = "views/{$this->app_name}/{$this->action}.p{$_ext_name}";
+        }
+
         // 以控制項的公開屬性為資料來源
         if ($model === null or $model === true)
             $model = get_object_vars($this->control);
@@ -743,28 +776,8 @@ class CommonGateway
             extract($model, EXTR_PREFIX_INVALID, 'data');
         // 分配 $model 一個和控制項名稱相同但首字母小寫的別名(reference)
         $model_alias = lcfirst($this->app_name);
-        if ((is_object($model) or is_array($model)) and 
-            !isset($$model_alias))
-        {
+        if (!isset($$model_alias) and (is_object($model) or is_array($model)))
             $$model_alias = &$model;
-        }
-
-        // 根據服務名稱與 HTTP 標頭的 Accept 內容，載入對應的視圖。
-        // 視圖的副檔名按 Ruby on Rails 型式，開頭為 p ，後接文件型態名稱。
-        // 例如 HTML 文件的視圖，副檔名為 phtml 。
-        // 比較特別的是 JSON 文件的視圖，其副檔名為 pjs ，不是 pjson 。
-        if ($this->request_document_type == 'json' or
-            $this->request_document_type == 'javascript')
-        {
-            $_ext_name = 'js';
-        } 
-        else 
-        {
-            $_ext_name = $this->request_document_type;
-        }
-
-        // RoR style's view name.
-        $_view_filepath = "views/{$this->app_name}/{$this->action}.p{$_ext_name}";
 
         if (file_exists($_view_filepath)) {
             include_once $_view_filepath;
@@ -825,11 +838,6 @@ namespace cg
 {
 class Controller
 {
-    public function index()
-    {
-        echo 'index...';
-    }
-
     /**
      Laod uploaded files form $_FILES or $_POST (JSON only).
      1. 此方法不會保留上傳檔案的原本名稱。忽略 $_FILES 的 'name' 欄位。
@@ -869,16 +877,41 @@ class Controller
         return $files;
     }
 }
+
+class View
+{
+    public $viewName;
+    public $model;
+
+    public function __construct(string $view_name, $model = null)
+    {
+        $this->viewName = $view_name;
+        $this->model = $model;
+    }
+}
 } // end namespace cg
 
 namespace cg\html 
 {
-    // base on index.php/$controller_path
-    function request_url($controller_path = false)
+    /**
+     * get request url. example:
+     * request_url() = "//HOST/index.php" or
+     * request_url('control') = "//HOST/index.php/control"
+     * request_url('control', 123, 'abc') = "//HOST/index.php/control/123/abc"
+     * request_url('control', [123, 'abc']) = "//HOST/index.php/control/123/abc"
+     */
+    function request_url($controller_path = null, ...$args)
     {
-        $root = '//' . $_SERVER['HTTP_HOST'] . $_SERVER['SCRIPT_NAME'];
+        $root = sprintf('//%s%s', $_SERVER['HTTP_HOST'], $_SERVER['SCRIPT_NAME']);
         if ($controller_path) {
-            $root .= '/' . $controller_path;
+            if (empty($args)) {
+                $root = sprintf('%s/%s', $root, $controller_path);
+            }
+            else {
+                if (is_array($args[0]))
+                    $args = $args[0];
+                $root = sprintf('%s/%s/%s', $root, $controller_path, implode('/', $args));
+            }
         }
         return $root;
     }
@@ -888,45 +921,47 @@ namespace cg\html
         return request_url();
     }
 
-    // redirect to $fullpath/index.php or $fullpath/index.php/controller_path
-    function redirect($controller_path = false)
+    /** redirect to $fullpath/index.php or $fullpath/index.php/controller_path */
+    function redirect($controller_path = false, ...$args)
     {
-        header('Location: ' . request_url($controller_path));
+        header('Location: ' . request_url($controller_path, ...$args));
     }
 
-    function resource_url($path = false)
+    function resource_url(...$path_segments)
     {
         $root = dirname($_SERVER['SCRIPT_NAME']);
-        if (!$path) {
+        if ($root == '\\')
+            $root = '/';
+        if (empty($path_segments))
             return $root;
-        }
-        return $root . '/' . $path;
+
+        if (is_array($path_segments[0]))
+            $path_segments = $path_segments[0];
+        $real_path = sprintf('%s/%s', $root, implode('/', $path_segments));
+        return $real_path;
     }
 
-    function stylesheet($srcs)
+    /** Output stylesheet markup */
+    function stylesheet(...$srcs)
     {
-        if (is_array($srcs)) {
-            foreach ($srcs as $src) {
-                echo '<link rel="stylesheet" href="', resource_url($src), '">', "\n";
-            }
-        }
-        else {
-            echo '<link rel="stylesheet" href="', resource_url($srcs), '">', "\n";
+        if (is_array($srcs[0]))
+            $srcs = $srcs[0];
+        foreach ($srcs as $src) {
+            echo '<link rel="stylesheet" href="', resource_url($src), '">', "\n";
         }
     }
 
-    function script($srcs)
+    /** Output script markup */
+    function script(...$srcs)
     {
-        if (is_array($srcs)) {
-            foreach ($srcs as $src) {
-                echo '<script src="', resource_url($src), '"></script>', "\n";
-            }
-        }
-        else {
-            echo '<script src="', resource_url($srcs), '"></script>', "\n";
+        if (is_array($srcs[0]))
+            $srcs = $srcs[0];
+        foreach ($srcs as $src) {
+            echo '<script src="', resource_url($src), '"></script>', "\n";
         }
     }
 
+    /** Output refresh meta markup */
     function refresh($seconds)
     {
         echo '<meta http-equiv="refresh" content="', $seconds, '">', "\n";
