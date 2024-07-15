@@ -930,8 +930,8 @@ namespace cg\html
     function resource_url(...$path_segments)
     {
         $root = dirname($_SERVER['SCRIPT_NAME']);
-        if ($root == '\\')
-            $root = '/';
+        if ($root == '\\' or $root == '/') // web root
+            $root = '';
         if (empty($path_segments))
             return $root;
 
