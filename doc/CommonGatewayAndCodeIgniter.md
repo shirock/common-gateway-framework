@@ -43,7 +43,7 @@ PHP 可用 `$_SERVER['PATH_INFO']` 取得。
 
 你可以把 URI 想像成命令列指令，差別在於 URI 要用 '/' 字元分隔參數。
 
-例如: controller 是控制項名稱， say 的方法／指令， hello 是參數。
+例如: controller 是控制項名稱， say 是方法／指令， hello 是參數。
 
 CLI:
 
@@ -91,17 +91,17 @@ class Controller1 {
 View 與 Helper
 --------------
 
-CI 要由控制項(controller)自行載入。 CG 則用同名自動載入策略，不提供手動載入。
+CI 要由控制項(controller)自行載入。 CG 則用同名自動載入策略，但也允許控制項自行載入。
 
 CG 著重在 RESTful 的內容回應，所以它可針對使用者的請求文件型態，決定回傳的文件內容。
 
-舉例來說，如果使用者送來的 GET 請求標頭中指明要 JSON 文件 (Accept: application/json)，則 CG 會載入 views/name1/get.pjs 視圖 。
+舉例來說，如果使用者送來的 GET 請求標頭中指明要 JSON 文件 (Accept: application/json)，則 CG 會載入 views/name1/get.pjs 視圖。甚至 CG 對於 JSON 文件請求會自動呼叫 `json_encode()` ，不用準備視圖。
 
-對於強調視覺樣式的 HTML 頁面案例， CG 提供的支援太少。如果你需要處理大量 HTML 頁面內容，請用 CI 。
+CG 的設計重點是 RESTful 案例。對於強調視覺樣式的網站設計案例， CG 提供的支援太少。如果你需要設計大型網站，建議用 CI 或 Laravel。
 
 Config
 ------
 
 CI 提供 Config class ，自動載入 application/config/config.php ，並可由使用者手動載入其他的組態內容。
 
-CG 自動載入 config/config.php ，並用 Auto-wire 技巧，由 index.php 往控制項中注入屬性內容。其中控制項屬性名稱符合下列關鍵字者，將被自動注入內容。詳閱 [resource-inject.md](resource-inject.md)。
+CG 自動載入 etc/app_config.php ，並用 Auto-wire 技巧，由 index.php 往控制項中注入屬性內容。其中控制項屬性名稱符合下列關鍵字者，將被自動注入內容。詳閱 [resource-inject.md](resource-inject.md)。
