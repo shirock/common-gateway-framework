@@ -902,10 +902,14 @@ namespace cg\html
      * request_url('control') = "//HOST/index.php/control"
      * request_url('control', 123, 'abc') = "//HOST/index.php/control/123/abc"
      * request_url('control', [123, 'abc']) = "//HOST/index.php/control/123/abc"
+     * 如果你用 URL 重寫規則(rewrite rule)隱藏了 index.php (CGF)，則建議加上環境變數
+     * CGF_REQUEST_ROOT 指示 URL 重寫規則的根點(root)，如此才能回傳新規則的結果。
+     * See doc/url-rewrite.md
      */
     function request_url($controller_path = null, ...$args)
     {
         $root = sprintf('//%s%s', $_SERVER['HTTP_HOST'], $_SERVER['SCRIPT_NAME']);
+        $root = sprintf('//%s%s', $_SERVER['HTTP_HOST'], $_SERVER['CGF_REQUEST_ROOT'] ?? $_SERVER['SCRIPT_NAME']);
         if ($controller_path) {
             if (empty($args)) {
                 $root = sprintf('%s/%s', $root, $controller_path);

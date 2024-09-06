@@ -2,8 +2,8 @@
 
 ## 教學文件
 
-* [CommonGateway 介紹](https://www.rocksaying.tw/archives/21318202.html)
 * [CommonGateway 初步](https://www.rocksaying.tw/archives/21320836.html)
+* [CommonGateway 介紹](https://www.rocksaying.tw/archives/21318202.html)
 * [CommonGateway 第二步 - JSON 的處理與資料上傳](https://www.rocksaying.tw/archives/21334380.html)
 * [CommonGateway 控制項動作函數回傳狀態碼的作法](https://www.rocksaying.tw/archives/44121826.html)
 * [CommonGateway Authorize 認證註記功能教學](https://www.rocksaying.tw/archives/2021/CommonGateway_authorize.html)
@@ -21,3 +21,4 @@
 * [資源注入 resource-inject](resource-inject.md)
 * [控制項方法回傳資料如何成為視圖的資料來源 model](return-value-as-model.md)
 * [HTTP 狀態碼與方法 HTTP Status Codes](status_codes.md)
+* [URL rewrite 用 URL 重寫規則隱藏 CGF](url-rewrite.md)
